@@ -1,9 +1,10 @@
-import { Controller, Post, Body } from '@nestjs/common';
+import { Controller, Post, Body, UseGuards } from '@nestjs/common';
 import {
   ApiTags,
   ApiOperation,
   ApiOkResponse,
   ApiBadRequestResponse,
+  ApiExcludeEndpoint,
 } from '@nestjs/swagger';
 import { ErrorOutput } from '../common/dtos/output.dto';
 import { ContentsService } from '../contents/contents.service';
@@ -16,13 +17,17 @@ import {
   SummarizeContentBodyDto,
 } from '../contents/dtos/content.dto';
 import { CategoryService } from '../categories/category.service';
+import { TestService } from './test.service';
+import { IsAdminGuard } from './is-admin.guard';
 
 @Controller('test')
 @ApiTags('Test')
+@UseGuards(IsAdminGuard)
 export class TestController {
   constructor(
     private readonly contentsService: ContentsService,
     private readonly categoryService: CategoryService,
+    private readonly testService: TestService,
   ) {}
 
   @ApiOperation({
@@ -53,5 +58,13 @@ export class TestController {
     @Body() autoCategorizeBody: AutoCategorizeBodyDto,
   ): Promise<AutoCategorizeOutput> {
     return this.categoryService.autoCategorizeForTest(autoCategorizeBody);
+  }
+
+  @ApiExcludeEndpoint()
+  @Post('user')
+  async createTester(
+    @Body() { email, password }: { email: string; password: string },
+  ) {
+    return this.testService.createTester({ email, password });
   }
 }
