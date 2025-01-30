@@ -19,6 +19,6 @@ import { CategoryV2Controller } from './v2/category.v2.controller';
   ],
   controllers: [CategoryController, CategoryV2Controller],
   providers: [CategoryService, ContentRepository, CategoryRepository],
-  exports: [CategoryRepository],
+  exports: [CategoryRepository, CategoryService],
 })
 export class CategoryModule {}
